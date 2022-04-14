@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public static class UnityExtensions
 {
@@ -17,8 +18,7 @@ public static class UnityExtensions
         }
     }
 
-    private static readonly Dictionary<float, WaitForSeconds> WaitDictionary =
-        new Dictionary<float, WaitForSeconds>();
+    private static readonly Dictionary<float, WaitForSeconds> WaitDictionary = new();
     ///<summary>
     /// Non-allocating WaitForSeconds
     ///</summary>
@@ -58,13 +58,23 @@ public static class UnityExtensions
     }
 
     ///<summary>
-    ///Change alpha of Sprites to create Fade effect
+    ///Change alpha of SpriteRenderer to create Fade effect
     ///</summary>
     public static void Fade(this SpriteRenderer spriteRenderer, float alpha)
     {
         var color = spriteRenderer.color;
         color.a = alpha;
         spriteRenderer.color = color;
+    }
+
+    ///<summary>
+    ///Change alpha of SpriteRenderer to create Fade effect
+    ///</summary>
+    public static void Fade(this Image image, float alpha)
+    {
+        var color = image.color;
+        color.a = alpha;
+        image.color = color;
     }
 
     ///<summary>

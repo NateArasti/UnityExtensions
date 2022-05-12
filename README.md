@@ -1,2 +1,2 @@
 # UnityExtensions
-My Personal Unity Extension Class
+Unity Extension Class with lots of little useful stuff

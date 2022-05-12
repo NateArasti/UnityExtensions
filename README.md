@@ -1,4 +1,3 @@
-# My Unity Extensions
+# Unity UI Line Renderer
 
-I'll put all my little unity extensions in this repository in different branches, so be sure to check them
-You are free to use them all and lalalalaalal
+Currently, there are no Line Renderer for not world space UI in Unity, so I made this one ^_^

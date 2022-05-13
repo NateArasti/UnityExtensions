@@ -1,5 +1,7 @@
 using UnityEditor;
 using UnityEngine;
+// ReSharper disable PossibleNullReferenceException
+// ReSharper disable once CheckNamespace
 
 [CustomEditor(typeof(UILineRenderer))]
 public class UILineRendererEditor : Editor
@@ -33,5 +35,7 @@ public class UILineRendererEditor : Editor
         }
         if (GUILayout.Button("Add")) lineRenderer.AddPoint();
         if (GUILayout.Button("Remove")) lineRenderer.RemovePoint();
+
+        serializedObject.ApplyModifiedProperties();
     }
 }

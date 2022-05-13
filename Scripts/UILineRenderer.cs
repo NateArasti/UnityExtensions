@@ -9,11 +9,14 @@ public class UILineRenderer : Graphic
 {
     [Space(20f)]
     [SerializeField] private float _thickness = 10;
+    [SerializeField, Range(1, 100)] private float _resolution = 10;
     [SerializeField] private bool _fillGaps = true;
     [SerializeField] private bool _loop;
     [SerializeField] private bool _selectNew;
     [SerializeField] private GameObject _vertexPrefab;
     [HideInInspector] public List<Transform> _points = new();
+    private bool m_VertexPrefabSet;
+    private readonly Vector2[] m_ConnectionPoints = new Vector2[4];
 
     public Transform AddPoint()
     {
@@ -28,7 +31,8 @@ public class UILineRenderer : Graphic
         newPoint.SetAsLastSibling();
         _points.Add(newPoint);
         OnValidate();
-        SetVerticesPrefabs();
+        if(m_VertexPrefabSet)
+            SetVerticesPrefabs();
         if(_selectNew)
             Selection.activeTransform = newPoint;
         return newPoint;
@@ -50,7 +54,7 @@ public class UILineRenderer : Graphic
         return newPoint;
     }
 
-    public void RemovePoint()
+    public void RemoveLastPoint()
     {
 #if UNITY_EDITOR
         DestroyImmediate(_points[^1].gameObject);
@@ -76,6 +80,36 @@ public class UILineRenderer : Graphic
         OnValidate();
     }
 
+    public void SetVerticesPrefabs()
+    {
+        if (_vertexPrefab == null) return;
+        DeleteVerticesPrefabs();
+        foreach (var point in _points)
+        {
+            Instantiate(_vertexPrefab, point.position, Quaternion.identity)
+                .transform.SetParent(point);
+        }
+
+        m_VertexPrefabSet = true;
+    }
+
+    public void DeleteVerticesPrefabs()
+    {
+        foreach (var point in _points)
+        {
+            foreach (Transform child in point)
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(child.gameObject);
+#else
+                Destroy(child.gameObject);
+#endif
+            }
+        }
+
+        m_VertexPrefabSet = false;
+    }
+
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
@@ -94,38 +128,12 @@ public class UILineRenderer : Graphic
             CreateLineBetweenPoints(vh,
                 _points[^1].transform.position,
                 _points[0].transform.position);
-
-            var currentLastIndex = vh.currentVertCount - 1;
-            vh.AddTriangle(currentLastIndex, currentLastIndex - 1, 0);
-            vh.AddTriangle(0, 1, currentLastIndex);
+            CreateLineBetweenPoints(vh,
+                _points[0].transform.position,
+                _points[1].transform.position);
         }
     }
 
-    public void SetVerticesPrefabs()
-    {
-        if (_vertexPrefab == null) return;
-        DeleteVerticesPrefabs();
-        foreach (var point in _points)
-        {
-            Instantiate(_vertexPrefab, point.position, Quaternion.identity)
-                .transform.SetParent(point);
-        }
-    }
-
-    public void DeleteVerticesPrefabs()
-    {
-        foreach (var point in _points)
-        {
-            foreach (Transform child in point)
-            {
-#if UNITY_EDITOR
-                DestroyImmediate(child.gameObject);
-#else
-                Destroy(child.gameObject);
-#endif
-            }
-        }
-    }
     protected override void Start()
     {
         base.Start();
@@ -166,28 +174,87 @@ public class UILineRenderer : Graphic
 
         vertex.position = firstPoint + offsetLeft;
         if (_fillGaps) vertex.position += (Vector3) offsetFromCenter;
+        m_ConnectionPoints[2] = vertex.position;
         vh.AddVert(vertex);
         vertex.position = firstPoint + offsetRight;
         if (_fillGaps) vertex.position += (Vector3) offsetFromCenter;
+        m_ConnectionPoints[3] = vertex.position;
         vh.AddVert(vertex);
-
-        var currentLastIndex = vh.currentVertCount - 1;
 
         if (_fillGaps && !corner)
         {
-            vh.AddTriangle(currentLastIndex, currentLastIndex - 1, currentLastIndex - 3);
-            vh.AddTriangle(currentLastIndex, currentLastIndex - 2, currentLastIndex - 3);
+            FillGaps(vh);
         }
 
         vertex.position = secondPoint + offsetLeft;
         if (_fillGaps) vertex.position -= (Vector3) offsetFromCenter;
+        m_ConnectionPoints[0] = vertex.position;
         vh.AddVert(vertex);
         vertex.position = secondPoint + offsetRight;
         if (_fillGaps) vertex.position -= (Vector3) offsetFromCenter;
+        m_ConnectionPoints[1] = vertex.position;
         vh.AddVert(vertex);
 
-        currentLastIndex = vh.currentVertCount - 1;
+        var currentLastIndex = vh.currentVertCount - 1;
         vh.AddTriangle(currentLastIndex, currentLastIndex - 1, currentLastIndex - 3);
         vh.AddTriangle(currentLastIndex, currentLastIndex - 2, currentLastIndex - 3);
+    }
+
+    private void FillGaps(VertexHelper vh)
+    {
+        var a1 = m_ConnectionPoints[1].y - m_ConnectionPoints[0].y;
+        var b1 = m_ConnectionPoints[0].x - m_ConnectionPoints[1].x;
+        var c1 = -m_ConnectionPoints[0].x * m_ConnectionPoints[1].y + m_ConnectionPoints[0].y * m_ConnectionPoints[1].x;
+
+        var a2 = m_ConnectionPoints[3].y - m_ConnectionPoints[2].y;
+        var b2 = m_ConnectionPoints[2].x - m_ConnectionPoints[3].x;
+        var c2 = -m_ConnectionPoints[2].x * m_ConnectionPoints[3].y + m_ConnectionPoints[2].y * m_ConnectionPoints[3].x;
+
+        if (Mathf.Approximately(a1 * b2 - a2 * b1, 0))
+        {
+            var currentLastIndex = vh.currentVertCount - 1;
+            vh.AddTriangle(currentLastIndex, currentLastIndex - 1, currentLastIndex - 3);
+            vh.AddTriangle(currentLastIndex, currentLastIndex - 2, currentLastIndex - 3);
+        }
+        else
+        {
+            var center = new Vector2((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
+            var firstPoints = EvaluateSlerpPoints(m_ConnectionPoints[0], m_ConnectionPoints[2], center);
+            var secondPoints = EvaluateSlerpPoints(m_ConnectionPoints[1], m_ConnectionPoints[3], center);
+
+            var vertex = UIVertex.simpleVert;
+            vertex.color = color;
+            for (var i = 0; i < firstPoints.Count - 1; i += 1)
+            {
+                vertex.position = firstPoints[i];
+                vh.AddVert(vertex);
+                vertex.position = secondPoints[i];
+                vh.AddVert(vertex);
+                vertex.position = firstPoints[i + 1];
+                vh.AddVert(vertex);
+                vertex.position = secondPoints[i + 1];
+                vh.AddVert(vertex);
+
+                var currentLastIndex = vh.currentVertCount - 1;
+                vh.AddTriangle(currentLastIndex, currentLastIndex - 1, currentLastIndex - 3);
+                vh.AddTriangle(currentLastIndex, currentLastIndex - 2, currentLastIndex - 3);
+            }
+        }
+    }
+
+    private List<Vector3> EvaluateSlerpPoints(Vector3 start, Vector3 end, Vector3 center)
+    {
+        var result = new List<Vector3>();
+        var startRelativeCenter = start - center;
+        var endRelativeCenter = end - center;
+
+        var f = 1f / _resolution;
+
+        for (var i = 0f; i < 1 + f; i += f)
+        {
+            result.Add(Vector3.Slerp(startRelativeCenter, endRelativeCenter, i) + center);
+        }
+
+        return result;
     }
 }

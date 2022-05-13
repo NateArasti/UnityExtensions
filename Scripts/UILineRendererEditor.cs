@@ -33,8 +33,8 @@ public class UILineRendererEditor : Editor
                 EditorGUILayout.PropertyField(m_PointsProperty.GetArrayElementAtIndex(i));
             }
         }
-        if (GUILayout.Button("Add")) lineRenderer.AddPoint();
-        if (GUILayout.Button("Remove")) lineRenderer.RemovePoint();
+        if (GUILayout.Button("+")) lineRenderer.AddPoint();
+        if (GUILayout.Button("-")) lineRenderer.RemoveLastPoint();
 
         serializedObject.ApplyModifiedProperties();
     }

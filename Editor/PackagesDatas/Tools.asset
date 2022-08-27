@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _packageDisplayName: Tools
   _packageName: com.arastigames.unityextensions-tools
-  _gitUrl: https://github.com/NateArasti/UnityExtensions.git#unityextensions-tools
+  _gitUrl: https://github.com/NateArasti/UnityExtensions.git#UnityExtensions-Tools

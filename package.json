@@ -1,0 +1,16 @@
+{
+  "name": "com.arastigames.unityextensions-methods",
+  "version": "0.1.0",
+  "displayName": "Unity Extensions - Methods",
+  "description": "This package includes different extensions methods for Unity Development",
+  "keywords": [
+    "Extensions",
+    "Code",
+    "Tools"
+  ],
+  "author": {
+    "name": "Arasti",
+    "email": "arastigames@gmail.com"
+  },
+  "type": "library"
+}

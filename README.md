@@ -1,4 +1,3 @@
-# My Unity Extensions
+# UnityExtenstions - Methods
 
-I'll put all my little unity extensions in this repository in different branches, so be sure to check them
-You are free to use them all and lalalalaalal
+This package serves purpose of containing lots of different useful extensions methods for Unity. Feel free to use it!

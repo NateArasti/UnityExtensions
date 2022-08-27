@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 - [Installer] class
 - This ChangeLog to hopefully serve is't purpose
 
-[0.1.0]: 
+[0.1.0]: https://github.com/NateArasti/UnityExtensions/tree/v0.1.0
 [Extension Methods]: https://github.com/NateArasti/UnityExtensions/tree/UnityExtensions-Methods
 [Tools]: https://github.com/NateArasti/UnityExtensions/tree/UnityExtensions-Tools
 [Installer]: https://github.com/NateArasti/UnityExtensions/tree/UnityExtensions-PackagesInstaller

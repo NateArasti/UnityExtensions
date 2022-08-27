@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 - Add Computational Geometry Library
 
 ## 0.1.0: 2022-08-27
-### Added
+Added
 - [Extension Methods] package
 - [Tools] package
 - [Installer] class

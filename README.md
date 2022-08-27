@@ -1,4 +1,3 @@
-# My Unity Extensions
+# UnityExtenstions - Methods
 
-I'll put all my little unity extensions in this repository in different branches, so be sure to check them
-You are free to use them all and lalalalaalal
+This package serves purpose of installing extensions packages for Unity using upm system. Feel free to use it!

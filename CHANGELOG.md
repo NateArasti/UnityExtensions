@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 Added
 - [Extension Methods] package
 - [Tools] package
-- [Installer] class
+- [Installer] package
 - This ChangeLog to hopefully serve is't purpose
 
 [Extension Methods]: https://github.com/NateArasti/UnityExtensions/tree/UnityExtensions-Methods

@@ -76,7 +76,7 @@ namespace UnityExtensions
         }
 
         /// <summary>
-        /// Shuffle the list in place using the Fisher-Yates method.
+        /// Shuffle the list in place using the Satollo algorithm.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -85,11 +85,31 @@ namespace UnityExtensions
             var n = list.Count;
             while (n > 1)
             {
-                var k = Random.Range(0, n + 1);
-                (list[k], list[n - 1]) = (list[n - 1], list[k]);
-
                 n -= 1;
+
+                var k = Random.Range(0, n);
+                (list[k], list[n]) = (list[n], list[k]);
             }
+        }
+
+        /// <summary>
+        /// Get shuffled copy of the list using the "inside-out" algorithm.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        public static IList<T> GetShuffled<T>(this IList<T> list)
+        {
+            var newList = new List<T>(list);
+            for (var i = 0; i < list.Count; i++)
+            {
+                var j = Random.Range(0, i + 1);
+                if (j != i)
+                {
+                    newList[i] = newList[j];
+                }
+                newList[j] = list[i];
+            }
+            return newList;
         }
     }
 }

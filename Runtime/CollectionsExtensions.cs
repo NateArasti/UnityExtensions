@@ -86,7 +86,7 @@ namespace UnityExtensions
             while (n > 1)
             {
                 var k = Random.Range(0, n + 1);
-                (list[k], list[n]) = (list[n], list[k]);
+                (list[k], list[n - 1]) = (list[n - 1], list[k]);
 
                 n -= 1;
             }

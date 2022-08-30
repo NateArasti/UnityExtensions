@@ -223,6 +223,25 @@ namespace UnityExtensions
         }
 
         /// <summary>
+        /// Invoking action after predicate returns true
+        /// </summary>
+        /// <param name="behaviour"></param>
+        /// <param name="predicate"></param>
+        /// <param name="action"></param>
+        public static MonoBehaviour InvokeAfter(
+            this MonoBehaviour behaviour,
+            Func<bool> predicate,
+            UnityAction action,
+            out Coroutine coroutine
+            )
+        {
+            return StartCoroutine(
+                behaviour,
+                AfterDelay(action, predicate),
+                out coroutine);
+        }
+
+        /// <summary>
         /// Invoking action after specified frames delay
         /// </summary>
         /// <param name="behaviour">Which behaviour will start delay coroutine</param>
@@ -237,6 +256,25 @@ namespace UnityExtensions
             return StartCoroutine(
                 behaviour,
                 FramesDelay(action, framesCountDelay));
+        }
+
+        /// <summary>
+        /// Invoking action after specified frames delay
+        /// </summary>
+        /// <param name="behaviour">Which behaviour will start delay coroutine</param>
+        /// <param name="action">Action to invoke</param>
+        /// <param name="framesCountDelay">Count of frames that will be </param>
+        public static MonoBehaviour InvokeFramesDelayed(
+            this MonoBehaviour behaviour,
+            UnityAction action,
+            int framesCountDelay,
+            out Coroutine coroutine
+            )
+        {
+            return StartCoroutine(
+                behaviour,
+                FramesDelay(action, framesCountDelay),
+                out coroutine);
         }
 
         /// <summary>
@@ -257,6 +295,25 @@ namespace UnityExtensions
         }
 
         /// <summary>
+        /// Invoking action after specified seconds delay
+        /// </summary>
+        /// <param name="behaviour">Which behaviour will start delay coroutine</param>
+        /// <param name="action">Action to invoke</param>
+        /// <param name="delay">Timed delay in seconds</param>
+        public static MonoBehaviour InvokeSecondsDelayed(
+            this MonoBehaviour behaviour,
+            UnityAction action,
+            float delay,
+            out Coroutine coroutine
+            )
+        {
+            return StartCoroutine(
+                behaviour,
+                SecondsDelay(action, delay),
+                out coroutine);
+        }
+
+        /// <summary>
         /// Invoking action after specified seconds delay in realtime
         /// </summary>
         /// <param name="behaviour">Which behaviour will start delay coroutine</param>
@@ -271,6 +328,25 @@ namespace UnityExtensions
             return StartCoroutine(
                 behaviour,
                 RealtimeSecondsDelay(action, delay));
+        }
+
+        /// <summary>
+        /// Invoking action after specified seconds delay in realtime
+        /// </summary>
+        /// <param name="behaviour">Which behaviour will start delay coroutine</param>
+        /// <param name="action">Action to invoke</param>
+        /// <param name="delay">Timed delay in realtime seconds</param>
+        public static MonoBehaviour InvokeRealtimeSecondsDelayed(
+            this MonoBehaviour behaviour,
+            UnityAction action,
+            float delay,
+            out Coroutine coroutine
+            )
+        {
+            return StartCoroutine(
+                behaviour,
+                RealtimeSecondsDelay(action, delay),
+                out coroutine);
         }
 
         private static IEnumerator AfterDelay(UnityAction action, Func<bool> predicate)

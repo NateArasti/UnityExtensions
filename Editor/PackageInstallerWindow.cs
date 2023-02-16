@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
@@ -7,41 +6,43 @@ using UnityEngine;
 
 public class PackageInstallerWindow : EditorWindow
 {
-    private const string PackagesDatasPath = "Packages/com.arastigames.unityextensions-installer/Editor/PackagesDatas";
+    private const string k_PackagesDatasPath = "Packages/com.arastigames.unityextensions-installer/Editor/PackagesDatas";
 
-    private static readonly List<PackageData> _packagesDatas = new List<PackageData>();
+    private static ListRequest s_PackageListRequest;
+    private static readonly List<PackageData> s_PackagesDatas = new List<PackageData>();
 
-    private static ListRequest PackageListRequest;
+    private Vector2 m_ScrollPosition;
 
-    private Vector2 _scrollPosition;
-
-    [MenuItem("Tools/UnityExtensions Installer/Install Panel")]
+    [MenuItem("Tools/Extensions Installer Panel")]
     public static void ShowWindow()
     {
-        _packagesDatas.Clear();
-        foreach (var file in Directory.GetFiles(PackagesDatasPath))
+        s_PackagesDatas.Clear();
+        s_PackagesDatas.AddRange(PackageData.GetAllPackageDatas());
+
+        foreach (var package in s_PackagesDatas)
         {
-            var data = AssetDatabase.LoadAssetAtPath<PackageData>(file);
-            if (data != null)
-            {
-                _packagesDatas.Add(data);
-                data.Status = PackageData.PackageInstallationState.NotInstalled;
-            }
+            package.Status = PackageData.PackageInstallationState.NotInstalled;
         }
+
         GetPackageList();
-        GetWindow<PackageInstallerWindow>();
+        GetWindow<PackageInstallerWindow>("Extensions Installer Panel");
     }
 
     private void OnGUI()
     {
-        if (PackageListRequest != null && !PackageListRequest.IsCompleted)
+        var headerStyle =
+            new GUIStyle(EditorStyles.whiteLargeLabel) { alignment = TextAnchor.MiddleCenter };
+
+        GUILayout.Space(10);
+        if (s_PackageListRequest != null && !s_PackageListRequest.IsCompleted)
         {
-            GUILayout.Label("Searching for packages...", EditorStyles.boldLabel);
+            GUILayout.Label("Searching for packages...", headerStyle);
             return;
         }
-        GUILayout.Label("Separate UnityExtension packages installer", EditorStyles.boldLabel);
+        GUILayout.Label("UnityExtensions packages", headerStyle);
+        GUILayout.Space(10);
         var installingSomething = false;
-        foreach (var packageData in _packagesDatas)
+        foreach (var packageData in s_PackagesDatas)
         {
             if(packageData.Status == PackageData.PackageInstallationState.CurrentlyInstalling)
             {
@@ -49,9 +50,9 @@ public class PackageInstallerWindow : EditorWindow
                 break;
             }              
         }
-        if (_packagesDatas.Count == 0) ReloadWindow();
-        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
-        foreach (var packageData in _packagesDatas)
+        if (s_PackagesDatas.Count == 0) ReloadWindow();
+        m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
+        foreach (var packageData in s_PackagesDatas)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(packageData.PackageDisplayName);
@@ -59,34 +60,35 @@ public class PackageInstallerWindow : EditorWindow
             {
                 GUI.enabled = false;
             }
+            GUI.contentColor = Color.white;
+            if (GUILayout.Button("Source", GUILayout.MaxWidth(100)))
+            {
+                Application.OpenURL(packageData.GitUrl);
+            }
             switch (packageData.Status)
             {
                 case PackageData.PackageInstallationState.CurrentlyInstalling:
+                    GUI.contentColor = Color.white;
                     GUILayout.Button("Installing...", GUILayout.MaxWidth(200));
                     break;
                 case PackageData.PackageInstallationState.Installed:
+                    GUI.contentColor = Color.red;
                     if (GUILayout.Button("Remove", GUILayout.MaxWidth(200)))
                     {
                         packageData.Remove();
                     }
                     break;
                 case PackageData.PackageInstallationState.NotInstalled:
+                    GUI.contentColor = Color.yellow;
                     if (GUILayout.Button("Install", GUILayout.MaxWidth(200)))
                     {
                         packageData.Add();
                     }
                     break;
             }
+            GUI.contentColor = Color.white;
             GUI.enabled = true;
             GUILayout.EndHorizontal();
-            var normalColor = GUI.contentColor;
-            GUI.contentColor = Color.cyan;
-            packageData.Shown = EditorGUILayout.Foldout(packageData.Shown, "Source");
-            if (packageData.Shown && GUILayout.Button("Open git", GUILayout.MaxWidth(200)))
-            {
-                Application.OpenURL(packageData.GitUrl);
-            }
-            GUI.contentColor = normalColor;
             GUILayout.Space(10);
         }
         GUILayout.EndScrollView();
@@ -100,18 +102,19 @@ public class PackageInstallerWindow : EditorWindow
 
     private static void GetPackageList()
     {
-        PackageListRequest = Client.List(true, false);
+        s_PackageListRequest = Client.List(true, false);
         EditorApplication.update += Progress;
     }
 
     static void Progress()
     {
-        if (PackageListRequest.IsCompleted)
+        if (s_PackageListRequest.IsCompleted)
         {
-            if (PackageListRequest.Status == StatusCode.Success)
-                foreach (var package in PackageListRequest.Result)
+            if (s_PackageListRequest.Status == StatusCode.Success)
+            {
+                foreach (var package in s_PackageListRequest.Result)
                 {
-                    foreach (var packageData in _packagesDatas)
+                    foreach (var packageData in s_PackagesDatas)
                     {
                         if (package.name == packageData.PackageName)
                         {
@@ -119,8 +122,11 @@ public class PackageInstallerWindow : EditorWindow
                         }
                     }
                 }
-            else if (PackageListRequest.Status >= StatusCode.Failure)
-                Debug.Log(PackageListRequest.Error.message);
+            }
+            else if (s_PackageListRequest.Status >= StatusCode.Failure)
+            {
+                Debug.Log(s_PackageListRequest.Error.message);
+            }
 
             EditorApplication.update -= Progress;
         }

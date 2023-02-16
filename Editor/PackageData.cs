@@ -2,7 +2,6 @@
 using UnityEditor;
 using UnityEditor.PackageManager.Requests;
 using UnityEditor.PackageManager;
-using UnityEngine.Events;
 
 [CreateAssetMenu(fileName = "PackageData", menuName = "PackageInstaller/PackageData")]
 public class PackageData : ScriptableObject
@@ -14,43 +13,28 @@ public class PackageData : ScriptableObject
         CurrentlyInstalling
     }
 
-    [SerializeField] private string _packageDisplayName;
-    [SerializeField] private string _packageName;
-    [SerializeField] private string _gitUrl;
-    private Request _request;
+    [SerializeField] private string m_PackageDisplayName;
+    [SerializeField] private string m_PackageName;
+    [SerializeField] private string m_GitUrl;
+    private Request m_CurrentRequest;
 
-    public string PackageDisplayName => _packageDisplayName;
-    public string PackageName => _packageName;
-    public string GitUrl => _gitUrl;
+    public string PackageDisplayName => m_PackageDisplayName;
+    public string PackageName => m_PackageName;
+    public string GitUrl => m_GitUrl;
     public PackageInstallationState Status { get; set; }
-
-    public bool Shown { get; set; }
-
-    public void Add()
-    {
-        _request = Client.Add(_gitUrl);
-        EditorApplication.update += InstallProgress;
-        Status = PackageInstallationState.CurrentlyInstalling;
-    }
-
-    public void Remove()
-    {
-        _request = Client.Remove(_packageName);
-        EditorApplication.update += RemoveProgress;
-    }
 
     private void InstallProgress()
     {
-        if (_request.IsCompleted)
+        if (m_CurrentRequest.IsCompleted)
         {
-            if (_request.Status == StatusCode.Success)
+            if (m_CurrentRequest.Status == StatusCode.Success)
             {
-                Debug.Log("Installed: " + _packageDisplayName);
+                Debug.Log("Installed: " + m_PackageDisplayName);
                 Status = PackageInstallationState.Installed;
             }
-            else if (_request.Status >= StatusCode.Failure)
+            else if (m_CurrentRequest.Status >= StatusCode.Failure)
             {
-                Debug.Log(_request.Error.message);
+                Debug.Log(m_CurrentRequest.Error.message);
             }
 
             EditorApplication.update -= InstallProgress;
@@ -59,19 +43,46 @@ public class PackageData : ScriptableObject
 
     private void RemoveProgress()
     {
-        if (_request.IsCompleted)
+        if (m_CurrentRequest.IsCompleted)
         {
-            if (_request.Status == StatusCode.Success)
+            if (m_CurrentRequest.Status == StatusCode.Success)
             {
-                Debug.Log("Removed: " + _packageDisplayName);
+                Debug.Log("Removed: " + m_PackageDisplayName);
                 Status = PackageInstallationState.NotInstalled;
             }
-            else if (_request.Status >= StatusCode.Failure)
+            else if (m_CurrentRequest.Status >= StatusCode.Failure)
             {
-                Debug.Log(_request.Error.message);
+                Debug.Log(m_CurrentRequest.Error.message);
             }
 
             EditorApplication.update -= RemoveProgress;
         }
+    }
+
+    public void Add()
+    {
+        m_CurrentRequest = Client.Add(m_GitUrl);
+        EditorApplication.update += InstallProgress;
+        Status = PackageInstallationState.CurrentlyInstalling;
+    }
+
+    public void Remove()
+    {
+        m_CurrentRequest = Client.Remove(m_PackageName);
+        EditorApplication.update += RemoveProgress;
+    }
+
+    public static PackageData[] GetAllPackageDatas()
+    {
+        var guids = AssetDatabase.FindAssets($"t:{nameof(PackageData)}");
+        var packageDatas = new PackageData[guids.Length];
+        for (int i = 0; i < guids.Length; i++)
+        {
+            var path = AssetDatabase.GUIDToAssetPath(guids[i]);
+            packageDatas[i] = AssetDatabase.LoadAssetAtPath<PackageData>(path);
+        }
+
+        return packageDatas;
+
     }
 }

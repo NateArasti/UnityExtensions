@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class PackageInstallerWindow : EditorWindow
 {
-    private const string k_PackagesDatasPath = "Packages/com.arastigames.unityextensions-installer/Editor/PackagesDatas";
-
     private static ListRequest s_PackageListRequest;
     private static readonly List<PackageData> s_PackagesDatas = new List<PackageData>();
 
@@ -125,7 +123,7 @@ public class PackageInstallerWindow : EditorWindow
             }
             else if (s_PackageListRequest.Status >= StatusCode.Failure)
             {
-                Debug.Log(s_PackageListRequest.Error.message);
+                Debug.LogError(s_PackageListRequest.Error.message);
             }
 
             EditorApplication.update -= Progress;

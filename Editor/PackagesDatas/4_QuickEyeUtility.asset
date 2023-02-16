@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PackageDisplayName: Quick Eye Utilities
   m_PackageName: com.quickeye.utility
-  m_GitUrl: https://github.com/ErnSur/QuickEye-Utility#upm
+  m_GitUrl: https://github.com/ErnSur/QuickEye-Utility.git#upm

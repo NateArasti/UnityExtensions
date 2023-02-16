@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.PackageManager.Requests;
 using UnityEditor.PackageManager;
 
-[CreateAssetMenu(fileName = "PackageData", menuName = "PackageInstaller/PackageData")]
+[CreateAssetMenu(fileName = "ExtensionPackageData", menuName = "ExtensionsInstaller/ExtensionPackageData")]
 public class PackageData : ScriptableObject
 {
     public enum PackageInstallationState

@@ -1,7 +1,6 @@
 # Unity Extensions
 
-I'll put all unity extensions that I found useful and mostly created my self in this repository in different branches, so be sure to check them all!
-You can also use [Package Installer] to install all package from this repository and some third-party extensions.
+This repository serves purpose of containing different useful extensions over Unity. Extensions that I made myself I'll store in different branches and you can download them through upm, but I highly recommend to install just a [Package Installer] which also contains some cool third-party extensions for downloading.
 
 [Package Installer]: https://github.com/NateArasti/UnityExtensions/tree/UnityExtensions-PackagesInstaller
 

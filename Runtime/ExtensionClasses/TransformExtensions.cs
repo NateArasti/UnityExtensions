@@ -25,7 +25,7 @@ namespace UnityExtensions
             if (resetRotation)
                 transform.localRotation = Quaternion.identity;
             if (resetScale)
-                transform.localScale = Vector3.zero;
+                transform.localScale = Vector3.one;
         }
 
         /// <summary>

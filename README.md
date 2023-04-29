@@ -6,5 +6,7 @@ This repository serves purpose of containing different useful extensions over Un
 
 
 ## Current plans:
-- DebugConsole SDK
+- Debug Console SDK
 - In Editor Notes Tool
+- Advanced Gizmos API
+- Computational Geometry Library

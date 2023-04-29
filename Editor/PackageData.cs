@@ -2,15 +2,27 @@
 using UnityEditor;
 using UnityEditor.PackageManager.Requests;
 using UnityEditor.PackageManager;
+using System.Collections.Generic;
+using System.IO;
 
-[CreateAssetMenu(fileName = "ExtensionPackageData", menuName = "ExtensionsInstaller/ExtensionPackageData")]
-public class PackageData : ScriptableObject
+[System.Serializable]
+public class PackageData
 {
     public enum PackageInstallationState
     {
+        None,
         NotInstalled,
         Installed,
         CurrentlyInstalling
+    }
+
+    public static string RootPath
+    {
+        get
+        {
+            var g = AssetDatabase.FindAssets($"t:Script {nameof(PackageData)}");
+            return AssetDatabase.GUIDToAssetPath(g[0]);
+        }
     }
 
     [SerializeField] private string m_PackageDisplayName;
@@ -22,6 +34,13 @@ public class PackageData : ScriptableObject
     public string PackageName => m_PackageName;
     public string GitUrl => m_GitUrl;
     public PackageInstallationState Status { get; set; }
+
+    public PackageData(string displayName, string packageName, string gitUrl)
+    {
+        m_PackageDisplayName = displayName;
+        m_PackageName = packageName;
+        m_GitUrl = gitUrl;
+    }
 
     private void InstallProgress()
     {
@@ -72,17 +91,26 @@ public class PackageData : ScriptableObject
         EditorApplication.update += RemoveProgress;
     }
 
-    public static PackageData[] GetAllPackageDatas()
+    public static List<PackageData> GetAllPackageDatas()
     {
-        var guids = AssetDatabase.FindAssets($"t:{nameof(PackageData)}");
-        var packageDatas = new PackageData[guids.Length];
-        for (int i = 0; i < guids.Length; i++)
+        FileInfo file = new FileInfo(RootPath);
+        var path = file.Directory.ToString();
+        path.Replace('\\', '/');
+
+        path = Path.Combine(path, "packagesData.json");
+        var packageListWrapper = JsonUtility.FromJson(File.ReadAllText(path), typeof(PackageDataListWrapper)) as PackageDataListWrapper;
+
+        return packageListWrapper.packageDatas;
+    }
+
+    [System.Serializable]
+    private class PackageDataListWrapper
+    {
+        public List<PackageData> packageDatas;
+
+        public PackageDataListWrapper(List<PackageData> packageDatas)
         {
-            var path = AssetDatabase.GUIDToAssetPath(guids[i]);
-            packageDatas[i] = AssetDatabase.LoadAssetAtPath<PackageData>(path);
+            this.packageDatas = packageDatas;
         }
-
-        return packageDatas;
-
     }
 }

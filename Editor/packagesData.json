@@ -1,0 +1,34 @@
+{
+    "packageDatas": [
+        {
+            "m_PackageDisplayName": "UnityExtensions",
+            "m_PackageName": "com.arastigames.unityextensions",
+            "m_GitUrl": "https://github.com/NateArasti/UnityExtensions.git#UnityExtensions"
+        },
+        {
+            "m_PackageDisplayName": "NaughtyAttributes",
+            "m_PackageName": "com.dbrizov.naughtyattributes",
+            "m_GitUrl": "https://github.com/dbrizov/NaughtyAttributes.git#upm"
+        },
+        {
+            "m_PackageDisplayName": "Quick Eye Utilities",
+            "m_PackageName": "com.quickeye.utility",
+            "m_GitUrl": "https://github.com/ErnSur/QuickEye-Utility.git#upm"
+        },
+        {
+            "m_PackageDisplayName": "DependenciesHunter",
+            "m_PackageName": "unity-dependencies-hunter",
+            "m_GitUrl": "https://github.com/AlexeyPerov/Unity-Dependencies-Hunter.git#upm"
+        },
+        {
+            "m_PackageDisplayName": "Hierarchy Sections",
+            "m_PackageName": "com.csaratakij.hierachysection",
+            "m_GitUrl": "https://github.com/CSaratakij/HierachySection.git#upm"
+        },
+        {
+            "m_PackageDisplayName": "Transforms Recorder",
+            "m_PackageName": "com.mezookan.transforms-recorder",
+            "m_GitUrl": "https://github.com/abbabon/TransformsRecorder.git?path=Packages/TransformsRecorder"
+        }
+    ]
+}

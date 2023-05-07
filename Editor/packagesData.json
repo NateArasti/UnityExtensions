@@ -6,6 +6,11 @@
             "m_GitUrl": "https://github.com/NateArasti/UnityExtensions.git#UnityExtensions"
         },
         {
+            "m_PackageDisplayName": "UNotes",
+            "m_PackageName": "com.arastigames.unotes",
+            "m_GitUrl": "https://github.com/NateArasti/UnityExtensions.git#UNotes"
+        },
+        {
             "m_PackageDisplayName": "NaughtyAttributes",
             "m_PackageName": "com.dbrizov.naughtyattributes",
             "m_GitUrl": "https://github.com/dbrizov/NaughtyAttributes.git#upm"

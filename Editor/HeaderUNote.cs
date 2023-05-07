@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using UnityEditor;
 
 namespace UNotes
@@ -9,7 +10,7 @@ namespace UNotes
     [InitializeOnLoad]
     internal static class HeaderUNote
     {
-        private static readonly Type[] s_IgnoredTypes = new[] { typeof(AssetImporter) };
+        private static readonly Type[] s_IgnoredTypes = new[] { typeof(AssetImporter), typeof(Material) };
 
         private static Editor s_CachedEditor;
         private static bool s_IsEditingNote;

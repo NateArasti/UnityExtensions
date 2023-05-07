@@ -139,21 +139,6 @@ namespace UNotes
         {
             if (UNotesStorage.Instance == null || UNotesStorage.Instance.ObjectNotes.Count == 0) return;
 
-            var cachedColor = GUI.color;
-            GUI.color = Color.red;
-            if(GUILayout.Button("Clear all notes"))
-            {
-                if(EditorUtility.DisplayDialog(
-                    "Delete all notes", 
-                    "Are you sure you want to delete all notes?", 
-                    "Yes",
-                    "No"))
-                {
-                    UNotesStorage.Instance.ClearAll();
-                }
-            }
-            GUI.color = cachedColor;
-
             m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);
 
             var rect = EditorGUILayout.GetControlRect();
@@ -170,6 +155,21 @@ namespace UNotes
             }
 
             EditorGUILayout.EndScrollView();
+
+            var cachedColor = GUI.color;
+            GUI.color = Color.red;
+            if (GUILayout.Button("Clear all notes"))
+            {
+                if (EditorUtility.DisplayDialog(
+                    "Delete all notes",
+                    "Are you sure you want to delete all notes?",
+                    "Yes",
+                    "No"))
+                {
+                    UNotesStorage.Instance.ClearAll();
+                }
+            }
+            GUI.color = cachedColor;
         }
     }
 }

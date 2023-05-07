@@ -1,0 +1,16 @@
+{
+  "name": "com.arastigames.unotes",
+  "version": "1.0.0",
+  "displayName": "UNotes",
+  "description": "This tool provides logic to create editor notes on object and whole projects",
+  "keywords": [
+    "Extensions",
+    "Code",
+    "Tools"
+  ],
+  "author": {
+    "name": "Arasti",
+    "email": "natearasti@jetstyle.ru"
+  },
+  "type": "tool"
+}

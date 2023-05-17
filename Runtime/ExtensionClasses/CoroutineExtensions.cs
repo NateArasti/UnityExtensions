@@ -55,7 +55,7 @@ namespace UnityExtensions
 
         #region Coroutines Invoking
 
-        private static CoroutineBehaviour _separateCoroutineBehaviour;
+        private static CoroutineBehaviour s_SeparateCoroutineBehaviour;
         /// <summary>
         /// This is behaviour that is running all coroutines that were invoked separately
         /// </summary>
@@ -63,13 +63,15 @@ namespace UnityExtensions
         {
             get
             {
-                if (_separateCoroutineBehaviour == null)
+                if (s_SeparateCoroutineBehaviour == null)
                 {
-                    _separateCoroutineBehaviour = new GameObject(
+                    s_SeparateCoroutineBehaviour = new GameObject(
                         "---- Separate Behaviour For Coroutine ----",
                         typeof(CoroutineBehaviour)).GetComponent<CoroutineBehaviour>();
+                    UnityEngine.Object.DontDestroyOnLoad(s_SeparateCoroutineBehaviour);
+                    s_SeparateCoroutineBehaviour.gameObject.hideFlags = HideFlags.HideAndDontSave;
                 }
-                return _separateCoroutineBehaviour;
+                return s_SeparateCoroutineBehaviour;
             }
         }
 
